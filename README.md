@@ -1,21 +1,20 @@
 
+# Viết Linux driver trên hệ điều hành Linux cho module cảm biến áp suất BMP180
+
 # BMP180 Linux I2C Driver
 
-## Giới thiệu
+## Giới thiệu driver
 
-BMP180 là một cảm biến áp suất số chính xác cao được sản xuất bởi Bosch. Nó có thể đo áp suất khí quyển và nhiệt độ, đồng thời được sử dụng để tính toán độ cao. Cảm biến giao tiếp thông qua giao thức I2C, dễ tích hợp vào các hệ thống nhúng như Raspberry Pi, BeagleBone, hoặc các hệ thống Linux khác.
+Driver này được viết cho cảm biến BMP180 – một cảm biến đo áp suất và nhiệt độ, sử dụng giao tiếp I2C. Dự án gồm hai driver: một driver cơ bản (ghi log) và một driver nâng cao hỗ trợ giao tiếp với user-space qua IOCTL. 
 
-Driver này được viết cho nhân Linux để giao tiếp với BMP180 thông qua giao tiếp I2C.
-
+Driver có thể hoạt động trên các hệ thống nhúng như Raspberry Pi (đã cung cấp file `.dts` cho Raspberry Pi Zero 2 W).
 
 ##  Tính năng tiêu biểu
 
- Hỗ trợ giao tiếp I2C chuẩn của Linux kernel.
- Đọc dữ liệu nhiệt độ và áp suất sau khi bù hệ số hiệu chuẩn.
- Cung cấp giao diện ioctl để tương tác từ user-space.
- Không yêu cầu GPIO hay interrupt.
- Hỗ trợ tính toán độ cao từ áp suất (tùy chọn).
-
+•Giao tiếp I2C: Sử dụng SMBus để đọc thanh ghi BMP180.
+• Đọc nhiệt độ và áp suất: Đọc dữ liệu từ thanh ghi sau khi gửi lệnh đo.
+• Hỗ trợ IOCTL: Cho phép giao tiếp từ không gian người dùng.
+• Ghi log dữ liệu: Dữ liệu hiển thị trên dmesg.
 
 ##  Ứng dụng
 
@@ -24,23 +23,32 @@ Driver này được viết cho nhân Linux để giao tiếp với BMP180 thôn
  Thiết bị đo lường thời tiết.
  Hệ thống IoT, cảm biến môi trường, dự báo áp suất.
 
+## Giới thiệu về IC BMP180
 
-##  Giao tiếp I2C và hoạt động
+Tên IC: BMP180
+Nhà sản xuất: Bosch
+Địa chỉ I2C: 0x77
+Giao tiếp: I2C / SMBus
+Chức năng: đo nhiệt độ và áp suất
+Các thanh ghi quan trọng:
+• 0xF4: Thanh ghi CONTROL - Gửi lệnh đo
+• 0xF6: Kết quả MSB
+• 0xF7: Kết quả LSB
+• 0xF8: XLSB (áp suất)
+• Lệnh 0x2E: đo nhiệt độ
+• Lệnh 0x34: đo áp suất
+Quy trình giao tiếp:
+1. Ghi lệnh đo vào thanh ghi CONTROL (0xF4)
+2. Chờ thời gian xử lý (4.5ms nhiệt độ, 8ms áp suất)
+3. Đọc kết quả từ các thanh ghi (0xF6, 0xF7, 0xF8)
 
-Địa chỉ I2C mặc định: 0x77
+## Tài liệu đi kèm & Thông tin nhóm
 
-### Trình tự đọc dữ liệu:
-
-#### 1. Đọc hệ số hiệu chuẩn từ EEPROM:
- Địa chỉ từ 0xAA đến 0xBF.
-
-#### 2. Đọc nhiệt độ:
- Ghi 0x2E vào thanh ghi 0xF4.
- Chờ ít nhất 4.5ms.
- Đọc 2 byte tại 0xF6 và 0xF7.
-
-#### 3. Đọc áp suất:
- Ghi 0x34 + (OSS << 6) vào `0xF4.
- Chờ 4.5ms đến 25.5ms tùy OSS (Oversampling Setting).
- Đọc 3 byte tại 0xF6, 0xF7, 0xF8.
-
+1. Datasheet BMP180:
+  https://www.alldatasheet.com/datasheet-pdf/download/1132068/BOSCH/BMP180.html
+2. Mã nguồn tham khảo từ Linux Kernel:
+  https://github.com/torvalds/linux/blob/master/drivers/i2c/i2c-dev.c
+3. Thành viên thực hiện:
+• Huỳnh Thị Thu Hà      -    22146299
+• Đinh Gia Khánh        -    22146330
+• Nguyễn Phương Nguyên  -    22146361
