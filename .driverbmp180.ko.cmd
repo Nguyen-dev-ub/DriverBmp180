@@ -1,0 +1,1 @@
+cmd_/home/pi/Documents/bmp180/driverbmp180.ko := ld -r -EL -z noexecstack --build-id=sha1  -T scripts/module.lds -o /home/pi/Documents/bmp180/driverbmp180.ko /home/pi/Documents/bmp180/driverbmp180.o /home/pi/Documents/bmp180/driverbmp180.mod.o;  true
