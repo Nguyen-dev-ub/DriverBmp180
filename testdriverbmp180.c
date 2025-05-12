@@ -1,3 +1,11 @@
+//Tai lieu di kem:
+//                  1.datasheet:    https://www.alldatasheet.com/datasheet-pdf/download/1132068/BOSCH/BMP180.html
+//                  2.github:       https://github.com/torvalds/linux/blob/master/drivers/i2c/i2c-dev.c
+
+//Thanh vien nhom:  Huynh Thi Thu Ha        22146299
+//                  Dinh Gia Khanh          22146330
+//                  Nguyen Phuong Nguyen    22146361
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
